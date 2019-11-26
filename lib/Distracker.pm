@@ -2,10 +2,11 @@ package Distracker;
 use strict;
 use warnings FATAL => 'all';
 
-use FindBin '$Bin';
-our $Bin;
+use File::Spec;
+use Cwd;
 
-my $base_dir = $ENV{DISTRACKER_DATADIR} || "$Bin/data";
+our $base_dir = $ENV{DISTRACKER_DATADIR} || File::Spec->catfile(Cwd::abs_path(), "./data");
+die "Failed to open the data directory ($base_dir)" unless (-e "$base_dir" || mkdir "$base_dir");
 
 sub save_values {
     my ($id, $values) = @_;
@@ -25,7 +26,7 @@ sub save_values {
 }
 
 sub get_sensors {
-    opendir(my $dh, $base_dir) or die "Failed to open $main::base_dir";
+    opendir(my $dh, $base_dir) or die "Failed to open $base_dir";
     my @dirs = ();
     while (my $dir = readdir($dh)) {
         next if ($dir =~ /\.{1,2}/);
