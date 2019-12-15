@@ -1,6 +1,12 @@
 name: Docker image
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   build:
@@ -15,20 +21,20 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
           
-      - name: Publish Docker Action
-        uses: jerray/publish-docker-action@v1.0.3
-        with:
-          username: horodchukanton
-          password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
-          # Docker build context
-          # path: # optional, default is .
-          # Static image tag list, separated by comma
-          # tags: # optional, default is latest
-          # Docker build-time variables, separated by comma
-          # build_args: # optional
-          # If allow pull request trigger build
-          allow_pull_request: true # optional
-          # Generate tags by conditions automatically
-          auto_tag: true # optional
-          # Images to consider as cache sources
-          #cache: # optional
+#      - name: Publish Docker Action
+#        uses: jerray/publish-docker-action@v1.0.3
+#        with:
+#          username: horodchukanton
+#          password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+#          # Docker build context
+#          # path: # optional, default is .
+#          # Static image tag list, separated by comma
+#          # tags: # optional, default is latest
+#          # Docker build-time variables, separated by comma
+#          # build_args: # optional
+#          # If allow pull request trigger build
+#          allow_pull_request: true # optional
+#          # Generate tags by conditions automatically
+#          auto_tag: true # optional
+#          # Images to consider as cache sources
+#          #cache: # optional
