@@ -1,12 +1,23 @@
-package Distracker;
+package App::AHAProject;
 use strict;
 use warnings FATAL => 'all';
+
+use base 'Exporter';
+
+our @EXPORT = ':all';
 
 use File::Spec;
 use Cwd;
 
 our $base_dir = $ENV{DISTRACKER_DATADIR} || File::Spec->catfile(Cwd::abs_path(), "./data");
 die "Failed to open the data directory ($base_dir)" unless (-e "$base_dir" || mkdir "$base_dir");
+
+sub new {
+    my ($class, %params) = @_;
+    my $self = { %params };
+    bless $self, $class;
+    return $self;
+}
 
 sub save_values {
     my ($id, $values) = @_;
