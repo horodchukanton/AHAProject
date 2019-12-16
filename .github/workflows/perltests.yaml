@@ -1,16 +1,4 @@
 name: 'Setup Perl environment'
-#description: 'Setup a Perl environment and add it to the PATH'
-#author: 'Ichinose Shogo'
-#inputs:
-#  perl-version:
-#    description: 'The Perl version to download (if necessary) and use. Example: 5.30.0'
-#    default: '5'
-#runs:
-#  using: 'node12'
-#  main: 'lib/setup-perl.js'
-#branding:
-#  icon: 'play'
-#  color: 'blue'
 
 on: [push]
 
@@ -19,8 +7,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
-        perl: [ '5.30', '5.28' ]
+        os: ['ubuntu-latest']
+        perl: [ '5.30' ]
+    #        os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
+    #        perl: [ '5.30', '5.28' ]
     name: Perl ${{ matrix.perl }} on ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
