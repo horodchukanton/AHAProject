@@ -1,6 +1,6 @@
-name: 'Setup Perl environment'
+name: 'Run perl tests (prove)'
 
-on: []
+on: ['push']
 
 jobs:
   build:
