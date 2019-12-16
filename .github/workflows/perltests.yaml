@@ -14,11 +14,14 @@ jobs:
     name: Perl ${{ matrix.perl }} on ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
-
+      # Install perl
       - name: Setup perl
         uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: ${{ matrix.perl }}
+      # Show installed
       - run: perl -V
+      # Install project dependencies
       - run: cpanm --installdeps --notest .
+      # Run perl tests
       - run: prove -lv t

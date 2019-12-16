@@ -1,14 +1,12 @@
-package App::AHAProject::Sensor;
+package App::AHAProject::Module::Base;
 use strict;
 use warnings FATAL => 'all';
 
 use App::AHAProject::Data::TimeSeries;
 
-use constant {
-    MEASURABLE_ABSOLUTE => 0,
-    MEASURABLE_RELATIVE => 1,
-    MEASURABLE_BOOLEAN  => 2,
-};
+use App::AHAProject::Sensor::Humidity;
+use App::AHAProject::Sensor::Temperature;
+use App::AHAProject::Sensor::Moisture;
 
 my @fields = (
     {
@@ -17,6 +15,15 @@ my @fields = (
     },
     {
         name => 'name'
+    },
+    {
+        name => 'sensors',
+        type => 'array'
+    },
+    {
+        name => 'reportType',
+        type => 'enum',
+        enum => [ qw/schedule pull/ ]
     }
 );
 
@@ -27,7 +34,7 @@ sub new {
     bless $self, $class;
 
     $self->acquireParameters(\%params, \@fields);
-    $self->prepareMeasurables();
+    $self->initSensors();
 
     return $self;
 }
@@ -44,6 +51,40 @@ sub acquireParameters {
         }
     }
 }
+
+
+sub initSensors {
+    my ($self) = @_;
+
+    for my $m (@{$self->getSensorDefinitions}) {
+        my $sensor = _initializeSensor(%$m);
+        $self->{$m->{name}} = $sensor;
+        push(@{$self->{sensors}}, $sensor);
+    }
+}
+
+sub getSensors {
+    my $self = shift;
+    return wantarray ? @{$self->{sensors}} : $self->{sensors};
+}
+
+sub getSensorDefinitions {
+    die "'getSensorDefinitions()' should be overridden in the concrete class";
+}
+
+sub _initializeSensor {
+    my (%measurableDefinition) = @_;
+
+    my $package = "App::AHAProject::Sensor::" . $measurableDefinition{sensor};
+    my $instance = $package->new(%measurableDefinition);
+
+    return $instance;
+}
+
+=cut
+
+# Using perl magic is awesome, but looks ugly in IDE and makes code harder to read (virtual methods are not clear when seen)
+# This is saved for historical reasons.
 
 sub prepareMeasurables {
     my ($self) = @_;
@@ -69,18 +110,6 @@ sub prepareMeasurables {
     }
 }
 
-sub getMeasurables {
-    die "'getMeasurables()' should be overridden in the Concrete class";
-}
-
-sub _initializeMeasurable {
-    my (%measurableDefinition) = @_;
-
-    my $package = "App::AHAProject::Data::" . $measurableDefinition{class};
-
-    my $instance = $package->new(%measurableDefinition);
-
-    return $instance;
-}
+=cut
 
 1;

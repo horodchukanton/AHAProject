@@ -8,7 +8,7 @@ my $cache_limit = 86400;
 sub new {
     my ($class, %params) = @_;
     my $self = {
-        cachedValues => [],
+        cachedPoints => [],
         (%params)
     };
     bless $self, $class;
@@ -18,6 +18,10 @@ sub new {
 sub addValue {
     my ($self, $value) = @_;
     push(@{$self->{cachedValues}}, $value);
+}
+
+sub getValues {
+    return shift->{cachedValues};
 }
 
 sub getLastValue {
