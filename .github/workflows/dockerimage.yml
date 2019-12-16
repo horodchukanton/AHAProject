@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Build image
-        env:
-          docker_username: horodchukanton
-          docker_password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+      - name: Build and publish new image
+      - env:
+        docker_username: horodchukanton
+        docker_password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
       - run: docker login --username $docker_username --password $docker_password
       - run: docker build . -t horodchukanton/ahaproject:edge
       - run: docker push horodchukanton/ahaproject:edge
