@@ -1,12 +1,9 @@
 name: Docker image
 
 on:
-  push:
+  merge:
     branches:
-      - testing_docker_action
-#  pull_request:
-#    branches:
-#      - master
+      - master
 
 jobs:
   build:
@@ -21,21 +18,3 @@ jobs:
         env:
           docker_username: horodchukanton
           docker_password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
-
-#      - name: Publish Docker Action
-#        uses: jerray/publish-docker-action@v1.0.3
-#        with:
-#          username: horodchukanton
-#          password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
-#          # Docker build context
-#          # path: # optional, default is .
-#          # Static image tag list, separated by comma
-#          # tags: # optional, default is latest
-#          # Docker build-time variables, separated by comma
-#          # build_args: # optional
-#          # If allow pull request trigger build
-#          allow_pull_request: true # optional
-#          # Generate tags by conditions automatically
-#          auto_tag: true # optional
-#          # Images to consider as cache sources
-#          #cache: # optional
