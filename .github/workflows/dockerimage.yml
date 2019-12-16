@@ -3,7 +3,7 @@ name: Docker image
 on:
   push:
     branches:
-      - master
+      - testing_docker_action
 #  pull_request:
 #    branches:
 #      - master
@@ -13,14 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Build image
+        env:
+          docker_username: horodchukanton
+          docker_password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+      - run: docker login --username $docker_username --password $docker_password
+      - run: docker build . -t horodchukanton/ahaproject:edge
+      - run: docker push horodchukanton/ahaproject:edge
 
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
-          
 #      - name: Publish Docker Action
 #        uses: jerray/publish-docker-action@v1.0.3
 #        with:
