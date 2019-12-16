@@ -1,34 +1,20 @@
 name: Docker image
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      - name: Run a multi-line script
+      - name: Build and publish new image
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
-          
-      - name: Publish Docker Action
-        uses: jerray/publish-docker-action@v1.0.3
-        with:
-          username: horodchukanton
-          password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
-          # Docker build context
-          # path: # optional, default is .
-          # Static image tag list, separated by comma
-          # tags: # optional, default is latest
-          # Docker build-time variables, separated by comma
-          # build_args: # optional
-          # If allow pull request trigger build
-          allow_pull_request: true # optional
-          # Generate tags by conditions automatically
-          auto_tag: true # optional
-          # Images to consider as cache sources
-          #cache: # optional
+          docker login --username $docker_username --password $docker_password
+          docker build . -t horodchukanton/ahaproject:edge
+          docker push horodchukanton/ahaproject:edge
+        env:
+          docker_username: horodchukanton
+          docker_password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}

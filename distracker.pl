@@ -1,31 +1,31 @@
 #!/usr/bin/env perl
 use Mojolicious::Lite;
-use Distracker;
+use App::AHAProject;
 
 get '/' => sub {
-  my $c = shift;
+    my $c = shift;
 
-  my @sensors = Distracker::get_sensors();
+    my @sensors = App::AHAProject::get_sensors();
 
-  my @text = ();
-  for (@sensors){
-    push @text, "Sensor $_->{name}";
-    push(@text, Distracker::read_values($_->{id}));
-  }
+    my @text = ();
+    for (@sensors) {
+        push @text, "Sensor $_->{name}";
+        push(@text, reverse App::AHAProject::read_values($_->{id}));
+    }
 
-  $c->render(text => join("<br>", @text));
+    $c->render(text => join("<br>", @text));
 };
 
 post '/:id/:temp/:humidity' => sub {
-  my $c = shift;
-  my $id = $c->param('id');
+    my $c = shift;
+    my $id = $c->param('id');
 
-  Distracker::save_values($id, {
-      temp => $c->param('temp'),
-      humidity => $c->param('humidity')
-  });
+    App::AHAProject::save_values($id, {
+        temp     => $c->param('temp'),
+        humidity => $c->param('humidity')
+    });
 
-  $c->render(text => 'received')
+    $c->render(text => 'received')
 };
 
 app->start;
