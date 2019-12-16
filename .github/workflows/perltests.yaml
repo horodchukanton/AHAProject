@@ -1,6 +1,6 @@
 name: 'Setup Perl environment'
 
-on: [push]
+on: []
 
 jobs:
   build:
