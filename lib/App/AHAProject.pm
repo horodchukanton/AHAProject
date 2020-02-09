@@ -2,7 +2,7 @@ package App::AHAProject;
 use strict;
 use warnings FATAL => 'all';
 
-use base 'Exporter';
+use parent 'Exporter';
 
 our @EXPORT = ':all';
 

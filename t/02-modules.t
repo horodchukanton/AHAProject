@@ -2,12 +2,12 @@
 use strict;
 use warnings FATAL => 'all';
 
-use base qw(Test::Class);
+use parent qw(Test::Class);
 use Test::More tests => 9;
 use Test::Exception;
 
 use_ok('App::AHAProject::Module::Base');
-use_ok('App::AHAProject::Module::DHT11');
+use_ok('App::AHAProject::Module::Sensor::DHT11');
 
 sub create_module :Test(startup) {
     shift->{id} = '_test_module_' . int(rand(5000));
@@ -20,21 +20,21 @@ sub remove_module :Test(shutdown) {
 sub base_module :Tests(1) {
     my $test = shift;
     throws_ok {my $module = App::AHAProject::Module::Base->new(id => $test->{id})}
-        qr/should be overridden in the concrete class/, 'Is abstract';
+        qr/should be overriden in the ancestor of/, 'Is abstract';
 }
 
 sub module_sensors :Tests(2) {
-    my $module = App::AHAProject::Module::DHT11->new(id => shift->{id});
+    my $module = App::AHAProject::Module::Sensor::DHT11->new(id => shift->{id});
 
-    my @sensors = $module->getSensors();
+    my @sensors = $module->getMeasurables();
 
-    ok(ref $sensors[0] eq 'App::AHAProject::Sensor::Temperature', 'Temperature sensor is initialized');
-    ok(ref $sensors[1] eq 'App::AHAProject::Sensor::Humidity', 'Temperature sensor is initialized');
+    ok(ref $sensors[0] eq 'App::AHAProject::Value::Temperature', 'Temperature sensor is initialized');
+    ok(ref $sensors[1] eq 'App::AHAProject::Value::Humidity', 'Temperature sensor is initialized');
 
 }
 
 sub dht11_values :Tests(4) {
-    my $dht = App::AHAProject::Module::DHT11->new(id => shift->{id});
+    my $dht = App::AHAProject::Module::Sensor::DHT11->new(id => shift->{id});
 
     my $temp_value = $dht->getTemperature()->getLastValue();
     ok(!defined $temp_value, 'No last temp value on a fresh sensor');

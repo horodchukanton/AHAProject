@@ -2,11 +2,12 @@ package App::AHAProject::Module::Base;
 use strict;
 use warnings FATAL => 'all';
 
-use App::AHAProject::Data::TimeSeries;
+use App::AHAProject::Board::Pinout;
 
-use App::AHAProject::Sensor::Humidity;
-use App::AHAProject::Sensor::Temperature;
-use App::AHAProject::Sensor::Moisture;
+use App::AHAProject::Data::TimeSeries;
+use App::AHAProject::Value::Humidity;
+use App::AHAProject::Value::Temperature;
+use App::AHAProject::Value::Moisture;
 
 my @fields = (
     {
@@ -34,9 +35,25 @@ sub new {
     bless $self, $class;
 
     $self->acquireParameters(\%params, \@fields);
-    $self->initSensors();
+
+    if ($self->can('initMeasurables')) {
+        $self->initMeasurables();
+    };
+
+    if ($self->can('getPinoutScheme')) {
+        $self->pinout(App::AHAProject::Board::Pinout->new(pinout => $self->getPinoutScheme()));
+        initMeasurables();
+    };
 
     return $self;
+}
+
+#@returns App::AHAProject::Board::Pinout
+sub pinout {
+    if (defined($_[1])) {
+        $_[0]->{pinout} = $_[1];
+    }
+    return $_[0]->{pinout};
 }
 
 sub acquireParameters {
@@ -53,29 +70,32 @@ sub acquireParameters {
 }
 
 
-sub initSensors {
+sub initMeasurables {
     my ($self) = @_;
 
-    for my $m (@{$self->getSensorDefinitions}) {
-        my $sensor = _initializeSensor(%$m);
-        $self->{$m->{name}} = $sensor;
-        push(@{$self->{sensors}}, $sensor);
+    if (ref $self eq 'App::AHAProject::Module::Base') {
+        die "initMeasurables() should be overriden in the ancestor of ...Module::Base.\n.";
     }
+
+    if (my $method = $self->can('getMeasurables')) {
+        for my $m (@{$self->$method}) {
+            my $measurable = _initializeMeasurable(%$m);
+            $self->{$m->{name}} = $measurable;
+            push(@{$self->{measurables}}, $measurable);
+        }
+    }
+    return 1;
 }
 
-sub getSensors {
+sub getMeasurables {
     my $self = shift;
-    return wantarray ? @{$self->{sensors}} : $self->{sensors};
+    return wantarray ? @{$self->{measurables}} : $self->{measurables};
 }
 
-sub getSensorDefinitions {
-    die "'getSensorDefinitions()' should be overridden in the concrete class";
-}
-
-sub _initializeSensor {
+sub _initializeMeasurable {
     my (%measurableDefinition) = @_;
 
-    my $package = "App::AHAProject::Sensor::" . $measurableDefinition{sensor};
+    my $package = "App::AHAProject::Value::" . $measurableDefinition{sensor};
     my $instance = $package->new(%measurableDefinition);
 
     return $instance;

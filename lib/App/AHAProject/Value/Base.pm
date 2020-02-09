@@ -1,4 +1,4 @@
-package App::AHAProject::Sensor::Base;
+package App::AHAProject::Value::Base;
 use strict;
 use warnings FATAL => 'all';
 
@@ -41,11 +41,11 @@ sub addValue {
 
 sub getType {
     my $self = shift;
-    if (ref $self eq 'App::AHAProject::Sensor::Base') {
+    if (ref $self eq 'App::AHAProject::Value::Base') {
         die "'getType()' should be called on concrete class.";
     }
 
-    my $typeFullName = '$App::AHAProject::Sensor::' . $self->{sensor} . '::TYPE';
+    my $typeFullName = '$App::AHAProject::Value::' . $self->{sensor} . '::TYPE';
     return eval {"$typeFullName"};
 }
 
